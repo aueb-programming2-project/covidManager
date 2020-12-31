@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.StackPane?>
+<?scenebuilder-stylesheet '../style/vista.css'?>
+
+<StackPane fx:id="studentSubjects" alignment="BOTTOM_RIGHT" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.covid_fighters.gui.StudentCoursesCntrl">
+  <children>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <HBox prefHeight="250.0" prefWidth="771.0" spacing="20.0">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label text="Courses">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Label>
+                        <ListView fx:id="coursesListView" prefHeight="250.0" prefWidth="200.0" />
+                     </children>
+                  </VBox>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#selectButtonPushed" prefWidth="200.0" text="Select-&gt;" />
+                     </children>
+                  </StackPane>
+                  <VBox prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label text="Selected Courses">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Label>
+                        <TextArea fx:id="coursesTextArea" prefHeight="250.0" prefWidth="200.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+  </children>
+</StackPane>

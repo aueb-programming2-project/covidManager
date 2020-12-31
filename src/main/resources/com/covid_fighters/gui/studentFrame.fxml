@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?scenebuilder-stylesheet '../style/vista.css'?>
+
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.covid_fighters.gui.StudentFrameCntrl">
+  <children>
+      <MenuBar>
+        <menus>
+          <Menu fx:id="Menu" mnemonicParsing="false" text="MENU">
+               <graphic>
+                  <ImageView fx:id="Hamburger" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <items>
+                  <MenuItem fx:id="Main" mnemonicParsing="false" onAction="#studentMain" text="Main" />
+                  <MenuItem fx:id="Courses" mnemonicParsing="false" onAction="#studentCourses" text="Courses" />
+                  <MenuItem fx:id="Logout" mnemonicParsing="false" onAction="#studentLogout" text="Logout" />
+               </items></Menu>
+        </menus>
+      </MenuBar>
+    <StackPane fx:id="canvas" VBox.vgrow="ALWAYS" />
+  </children>
+</VBox>
