@@ -22,6 +22,10 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import static com.mongodb.client.model.Filters.eq;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Arrays;
+import java.util.List;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import org.bson.conversions.Bson;
@@ -41,7 +45,9 @@ public class CovidManagerServer
     
     @Override
     public ArrayList<Student> getStudent() throws RemoteException {
-        ArrayList<Student> studentsList = students.find().into(new ArrayList<>());
+        // Retrieves all students from database (very bad practice!!)
+        ArrayList<Student> studentsList = students.find().into(
+                new ArrayList<>());
         return studentsList; 
     }
     
@@ -61,10 +67,18 @@ public class CovidManagerServer
       if("secretary".equals(userName) && "pass".equals(password)) {
           return 1;
           
-      } else if ("student".equals(userName) && "pass".equals(password)) {
-          return 2;
+      } else {
+//          Document query = new Document();
+//          query.put("id_number", userName);
+          Student student = students.find(
+                  eq("id_number", Integer.parseInt(userName))).first();
+          if (student != null) {
+              if (student.decPassword().equals(password)) {
+                  return 2;
+              }
+          }
+          return 0;
       }
-      return 0;  
     }
     
     @Override
@@ -121,13 +135,13 @@ public class CovidManagerServer
         System.out.println("Server is Ready");
 
 //        // Add dummy data
-//        Student newStudent;
-//        newStudent = new Student("hacker","hacker1",LocalDate.of(1999, Month.MAY, 21), (int)2);
-//        students.insertOne(newStudent);
-//        newStudent = new Student("tester","tester1",LocalDate.of(1998, Month.JULY, 21), (int)1);
-//        List<Courses> courses = Arrays.asList(Courses.Macroeconomics, Courses.DataStructures);
-//        newStudent.setCourses(courses);
-//        students.insertOne(newStudent);
+        Student newStudent;
+        newStudent = new Student("hacker","hacker1",LocalDate.of(1999, Month.MAY, 21), (int)2);
+        students.insertOne(newStudent);
+        newStudent = new Student("tester","tester1",LocalDate.of(1998, Month.JULY, 21), (int)1);
+        List<Courses> courses = Arrays.asList(Courses.Macroeconomics, Courses.DataStructures);
+        newStudent.setCourses(courses);
+        students.insertOne(newStudent);
     }
 }
     

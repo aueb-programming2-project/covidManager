@@ -6,8 +6,10 @@
 package com.covid_fighters.gui;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import org.bson.codecs.pojo.annotations.BsonProperty;
@@ -27,8 +29,10 @@ public class Student implements Serializable {
     private LocalDate covidCase;
     @BsonProperty(value = "id_number") // Preserve java naming conversion
     private int idNumber;
-    private int password;
+    private String password;
     private List<Courses> courses;
+    @BsonProperty(value = "covid_probability") // Preserve java naming conversion
+    private int covidProbability;
     
     // Mongodb POJOs must include a public or protected, empty, no arguments, constructor.
     public Student() {
@@ -39,19 +43,23 @@ public class Student implements Serializable {
         this.lastName = lastName;
         this.birthday = birthday;
         this.idNumber = idNumber;
-        this.password = 12345;
+        this.password = Base64.getEncoder().encodeToString(
+                "12345".getBytes(StandardCharsets.ISO_8859_1));
         this.courses = Collections.emptyList();
+        this.covidProbability = 0;
     }
     
     
-    public Student(ObjectId id, String firstName, String lastName, LocalDate birthday, LocalDate covidCase, int idNumber, int password, List<Courses> courses) {
+    public Student(ObjectId id, String firstName, String lastName, LocalDate birthday, LocalDate covidCase, int idNumber, String password, List<Courses> courses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.covidCase = covidCase;
         this.idNumber = idNumber;
-        this.password = 12345;
+        this.password = Base64.getEncoder().encodeToString(
+                password.getBytes(StandardCharsets.ISO_8859_1));
         this.courses = Collections.emptyList();
+        this.covidProbability = 0;
     }
     
     @Override
@@ -71,20 +79,30 @@ public class Student implements Serializable {
         this.id = id;
     }
     
-    public int getPassword() {
-        return password;
-    }
-
-    public void setPassword(int password) {
-        this.password = password;
+    public String getPassword() {
+        // Returns Base64 encoded password
+        return password;  
     }
     
+    public void setPassword(String password) {
+        // Sets Base64 encoded Password
+        this.password =  password;
+    }
+
     public int getIdNumber() {
         return idNumber;
     }
 
     public void setIdNumber(int idNumber) {
         this.idNumber = idNumber;
+    }
+    
+    public int getCovidProbability() {
+        return covidProbability;
+    }
+
+    public void setCovidProbability(int covidProbability) {
+        this.covidProbability = covidProbability;
     }
     
     public String getFirstName() {
@@ -134,6 +152,21 @@ public class Student implements Serializable {
     
     public List<Courses> getCourses() {
         return courses;
+    }
+    
+    public void encPasswordAndSet(String password) {
+        // Password encode to Base64
+        this.password = Base64.getEncoder().encodeToString(
+                password.getBytes(StandardCharsets.ISO_8859_1)); 
+    }
+    
+    public String decPassword() {
+        // Password decode from Base64
+        String decodedPass = new String(
+                Base64.getDecoder().decode(password),
+                StandardCharsets.ISO_8859_1); 
+        
+        return decodedPass;
     }
     
     public String toString()
