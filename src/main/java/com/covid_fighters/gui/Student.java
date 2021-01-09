@@ -34,11 +34,16 @@ public class Student implements Serializable {
     @BsonProperty(value = "covid_probability") // Preserve java naming conversion
     private int covidProbability;
     
-    // Mongodb POJOs must include a public or protected, empty, no arguments, constructor.
+    // Mongodb POJOs must include a public or protected, 
+    // empty, no arguments, constructor.
     public Student() {
     }
 
-    public Student(String firstName, String lastName, LocalDate birthday, int idNumber) {
+    public Student(
+            String firstName, 
+            String lastName, 
+            LocalDate birthday, 
+            int idNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
@@ -49,8 +54,15 @@ public class Student implements Serializable {
         this.covidProbability = 0;
     }
     
-    
-    public Student(ObjectId id, String firstName, String lastName, LocalDate birthday, LocalDate covidCase, int idNumber, String password, List<Courses> courses) {
+    public Student(
+            ObjectId id, 
+            String firstName, 
+            String lastName, 
+            LocalDate birthday, 
+            LocalDate covidCase, 
+            int idNumber, 
+            String password, 
+            List<Courses> courses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
