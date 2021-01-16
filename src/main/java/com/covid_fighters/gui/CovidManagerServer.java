@@ -22,11 +22,14 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import static com.mongodb.client.model.Filters.eq;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import org.bson.Document;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -40,6 +43,8 @@ public class CovidManagerServer
     private static MongoClient mongoClient;
     private static MongoDatabase db;
     private static MongoCollection<Student> students;
+    private static MongoCollection<Courses> courses;
+    private static Courses coursesSchedule;
     
     protected CovidManagerServer() throws RemoteException {
         super();
@@ -127,7 +132,7 @@ public class CovidManagerServer
             
         // Retrieving my MongoDB Atlas URI from the system properties
 //        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://user:pass.qj3sm.mongodb.net/covid?w=majority");
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://@cluster0.qj3sm.mongodb.net/covid?w=majority");
         
         // Configure the CodecRegistry to include a codec to handle the translation to and from BSON for our POJOs
         CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
@@ -146,6 +151,29 @@ public class CovidManagerServer
         
         db = mongoClient.getDatabase("covid");
         students = db.getCollection("students", Student.class);
+        courses = db.getCollection("courses", Courses.class);
+        
+        coursesSchedule = new Courses();
+        
+        
+        coursesSchedule.setId("COURSES");
+        HashMap<String, List<DayOfWeek>> schedule;
+        schedule = coursesSchedule.getSchedule();
+        schedule.put(Courses.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.FRIDAY));
+        schedule.put(Courses.CoursesEnum.ProgrammingII.name(), Arrays.asList(DayOfWeek.FRIDAY));
+        coursesSchedule.setSchedule(schedule);
+        courses.insertOne(coursesSchedule);
+        
+
+        Bson filterByCoursesId = eq("_id", "COURSES");
+        coursesSchedule = courses.find(filterByCoursesId).first();
+        HashMap<String, List<DayOfWeek>> sschedule;
+        sschedule = coursesSchedule.getSchedule();
+        sschedule.put(Courses.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.SATURDAY));
+        coursesSchedule.setSchedule(sschedule);    
+        FindOneAndReplaceOptions returnDocAfterReplace = new FindOneAndReplaceOptions()
+                                                     .returnDocument(ReturnDocument.AFTER);
+        coursesSchedule = courses.findOneAndReplace(filterByCoursesId, coursesSchedule, returnDocAfterReplace);
         
         System.out.println("Server is Ready");
 

@@ -5,39 +5,55 @@
  */
 package com.covid_fighters.gui;
 
+import java.io.Serializable;
 import java.time.DayOfWeek;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import org.bson.codecs.pojo.annotations.BsonId;
+
 
 /**
- * Courses enumerator
+ * Courses class
  */
-public enum Courses {
-    ProgrammingI(), 
-    ProgrammingII(),  
-    DataStructures(),
-    Mathematics(),
-    Microeconomics(),
-    Macroeconomics(),
-    Management();
+public class Courses implements Serializable {
+    @BsonId()
+    private String id;
+    private HashMap<String, List<DayOfWeek>> schedule;
     
-    private List<DayOfWeek> weekDays;
- 
- 
-    public List<DayOfWeek> getWeekdays(){
-        return weekDays;
+    public enum CoursesEnum {
+        ProgrammingI,
+        ProgrammingII,
+        DataStructures,
+        Mathematics,
+        Microeconomics,
+        Macroeconomics,
+        Management;
+    }
+    
+    // Mongodb POJOs must include a public or protected, 
+    // empty, no arguments, constructor.
+    public Courses() {
+        schedule =  new HashMap<>();
+                
+        for (CoursesEnum course : CoursesEnum.values()) { 
+            schedule.put(course.name(), Collections.emptyList());
+        }  
     }
 
-    public void setWeekdays(DayOfWeek... weekDays){
-        this.weekDays = Arrays.asList(weekDays);
+    public String getId() {
+        return id;
     }
 
-    private Courses(DayOfWeek... weekDays) {
-        this.weekDays = Arrays.asList(weekDays);
+    public void setId(final String id) {
+        this.id = id;
+    }
+    
+    public HashMap<String, List<DayOfWeek>> getSchedule() {
+        return schedule;
     }
 
-    private Courses() {
-        this.weekDays = Collections.emptyList();
+    public void setSchedule(HashMap<String, List<DayOfWeek>> schedule) {
+        this.schedule = schedule;
     }
 }
