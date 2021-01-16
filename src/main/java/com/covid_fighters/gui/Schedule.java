@@ -14,12 +14,12 @@ import org.bson.codecs.pojo.annotations.BsonId;
 
 
 /**
- * Courses class
+ * Schedule class
  */
-public class Courses implements Serializable {
+public class Schedule implements Serializable {
     @BsonId()
     private String id;
-    private HashMap<String, List<DayOfWeek>> schedule;
+    private HashMap<String, List<DayOfWeek>> scheduleMap;
     
     public enum CoursesEnum {
         ProgrammingI,
@@ -33,11 +33,11 @@ public class Courses implements Serializable {
     
     // Mongodb POJOs must include a public or protected, 
     // empty, no arguments, constructor.
-    public Courses() {
-        schedule =  new HashMap<>();
+    public Schedule() {
+        scheduleMap =  new HashMap<>();
                 
         for (CoursesEnum course : CoursesEnum.values()) { 
-            schedule.put(course.name(), Collections.emptyList());
+            scheduleMap.put(course.name(), Collections.emptyList());
         }  
     }
 
@@ -49,11 +49,11 @@ public class Courses implements Serializable {
         this.id = id;
     }
     
-    public HashMap<String, List<DayOfWeek>> getSchedule() {
-        return schedule;
+    public HashMap<String, List<DayOfWeek>> getScheduleMap() {
+        return scheduleMap;
     }
 
-    public void setSchedule(HashMap<String, List<DayOfWeek>> schedule) {
-        this.schedule = schedule;
+    public void setScheduleMap(HashMap<String, List<DayOfWeek>> scheduleMap) {
+        this.scheduleMap = scheduleMap;
     }
 }

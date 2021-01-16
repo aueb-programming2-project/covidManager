@@ -43,8 +43,8 @@ public class CovidManagerServer
     private static MongoClient mongoClient;
     private static MongoDatabase db;
     private static MongoCollection<Student> students;
-    private static MongoCollection<Courses> courses;
-    private static Courses coursesSchedule;
+    private static MongoCollection<Schedule> scheduleColl;
+    private static Schedule schedule;
     
     protected CovidManagerServer() throws RemoteException {
         super();
@@ -151,29 +151,29 @@ public class CovidManagerServer
         
         db = mongoClient.getDatabase("covid");
         students = db.getCollection("students", Student.class);
-        courses = db.getCollection("courses", Courses.class);
+        scheduleColl = db.getCollection("schedule", Schedule.class);
         
-        coursesSchedule = new Courses();
+        schedule = new Schedule();
         
         
-        coursesSchedule.setId("COURSES");
-        HashMap<String, List<DayOfWeek>> schedule;
-        schedule = coursesSchedule.getSchedule();
-        schedule.put(Courses.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.FRIDAY));
-        schedule.put(Courses.CoursesEnum.ProgrammingII.name(), Arrays.asList(DayOfWeek.FRIDAY));
-        coursesSchedule.setSchedule(schedule);
-        courses.insertOne(coursesSchedule);
+        schedule.setId("SCHEDULE");
+        HashMap<String, List<DayOfWeek>> scheduleMap;
+        scheduleMap = schedule.getScheduleMap();
+        scheduleMap.put(Schedule.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.FRIDAY));
+        scheduleMap.put(Schedule.CoursesEnum.ProgrammingII.name(), Arrays.asList(DayOfWeek.FRIDAY));
+        schedule.setScheduleMap(scheduleMap);
+        scheduleColl.insertOne(schedule);
         
 
-        Bson filterByCoursesId = eq("_id", "COURSES");
-        coursesSchedule = courses.find(filterByCoursesId).first();
-        HashMap<String, List<DayOfWeek>> sschedule;
-        sschedule = coursesSchedule.getSchedule();
-        sschedule.put(Courses.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.SATURDAY));
-        coursesSchedule.setSchedule(sschedule);    
+        Bson filterByCoursesId = eq("_id", "SCHEDULE");
+        schedule = scheduleColl.find(filterByCoursesId).first();
+        HashMap<String, List<DayOfWeek>> scheduleMap1;
+        scheduleMap1 = schedule.getScheduleMap();
+        scheduleMap1.put(Schedule.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.SATURDAY));
+        schedule.setScheduleMap(scheduleMap1);    
         FindOneAndReplaceOptions returnDocAfterReplace = new FindOneAndReplaceOptions()
                                                      .returnDocument(ReturnDocument.AFTER);
-        coursesSchedule = courses.findOneAndReplace(filterByCoursesId, coursesSchedule, returnDocAfterReplace);
+        schedule = scheduleColl.findOneAndReplace(filterByCoursesId, schedule, returnDocAfterReplace);
         
         System.out.println("Server is Ready");
 
@@ -182,7 +182,7 @@ public class CovidManagerServer
 //        newStudent = new Student("hacker","hacker1",LocalDate.of(1999, Month.MAY, 21), (int)2);
 //        students.insertOne(newStudent);
 //        newStudent = new Student("tester","tester1",LocalDate.of(1998, Month.JULY, 21), (int)1);
-//        List<Courses> courses = Arrays.asList(Courses.Macroeconomics, Courses.DataStructures);
+//        List<Courses> courses = Arrays.asList(Schedule.Macroeconomics, Schedule.DataStructures);
 //        newStudent.setCourses(courses);
 //        students.insertOne(newStudent);
     }

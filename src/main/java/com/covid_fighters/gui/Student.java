@@ -30,7 +30,7 @@ public class Student implements Serializable {
     @BsonProperty(value = "id_number") // Preserve java naming conversion
     private int idNumber;
     private String password;
-    private List<Courses> courses;
+    private List<Schedule.CoursesEnum> courses;
     @BsonProperty(value = "covid_probability") // Preserve java naming conversion
     private int covidProbability;
     
@@ -62,7 +62,7 @@ public class Student implements Serializable {
             LocalDate covidCase, 
             int idNumber, 
             String password, 
-            List<Courses> courses) {
+            List<Schedule.CoursesEnum> courses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
@@ -154,15 +154,15 @@ public class Student implements Serializable {
         return Period.between(covidCase, LocalDate.now()).getDays();
     }
     
-//    public void setCourses(Courses... courses) {
+//    public void setCourses(Schedule.CoursesEnum... courses) {
 //       this.courses = Arrays.asList(courses);
 //    }
     
-    public void setCourses(List<Courses> courses) {
+    public void setCourses(List<Schedule.CoursesEnum> courses) {
        this.courses = courses;
     }
     
-    public List<Courses> getCourses() {
+    public List<Schedule.CoursesEnum> getCourses() {
         return courses;
     }
     
