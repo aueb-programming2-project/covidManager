@@ -47,6 +47,7 @@ public class Student implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
+        this.covidCase = null; 
         this.idNumber = idNumber;
         this.password = Base64.getEncoder().encodeToString(
                 "12345".getBytes(StandardCharsets.ISO_8859_1));
@@ -142,7 +143,7 @@ public class Student implements Serializable {
     }
     
     public LocalDate getCovidCase() {
-    return covidCase;
+        return covidCase;
     }
 
     public void setCovidCase(LocalDate covidCase) {
@@ -159,7 +160,7 @@ public class Student implements Serializable {
 //    }
     
     public void setCourses(List<Schedule.CoursesEnum> courses) {
-       this.courses = courses;
+        this.courses = courses;
     }
     
     public List<Schedule.CoursesEnum> getCourses() {

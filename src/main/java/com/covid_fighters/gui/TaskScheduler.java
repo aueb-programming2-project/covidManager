@@ -20,7 +20,6 @@ public class TaskScheduler {
     ScheduledExecutorService scheduledExecutor = Executors
             .newScheduledThreadPool(1);
     ProbabilityCalculator probabilityCalculator;
-    volatile boolean isStopIssued;
 
     /**
      *
@@ -31,7 +30,7 @@ public class TaskScheduler {
         this.probabilityCalculator = probabilityCalculator;
     }
 
-    public void startExecutionAt(int targetHour, int targetMin, int targetSec)
+    public void startAt(int targetHour, int targetMin, int targetSec)
     {
         Runnable taskWrapper = new Runnable(){
 
@@ -39,19 +38,18 @@ public class TaskScheduler {
             public void run() 
             {
                 probabilityCalculator.execute();
-                //startExecutionAt(targetHour, targetMin, targetSec);
             }
 
         };
-        long delay = calcNextDelay(targetHour, targetMin, targetSec);
-        scheduledExecutor.schedule(taskWrapper, delay, TimeUnit.SECONDS);
+        long delaySec = calcNextDelay(targetHour, targetMin, targetSec);
+        scheduledExecutor.schedule(taskWrapper, delaySec, TimeUnit.SECONDS);
     }
 
     private long calcNextDelay(int targetHour, int targetMin, int targetSec) 
     {
-        LocalDateTime localNow = LocalDateTime.now();
-        ZoneId currentZone = ZoneId.systemDefault();
-        ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+        LocalDateTime localDateTimeNow = LocalDateTime.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+        ZonedDateTime zonedNow = ZonedDateTime.of(localDateTimeNow, zoneId);
         ZonedDateTime zonedNextTarget = zonedNow
                 .withHour(targetHour)
                 .withMinute(targetMin)

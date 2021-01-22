@@ -27,6 +27,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gte;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.elemMatch;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
@@ -52,7 +53,7 @@ import org.bson.conversions.Bson;
 public class CovidManagerServer 
         extends UnicastRemoteObject implements CovidManagerService {
 
-    final int QUARANTINE_DAYS = 14;
+    public static final int QUARANTINE_DAYS = 14;
     
     private static MongoClient mongoClient;
     private static MongoDatabase db;
@@ -117,8 +118,8 @@ public class CovidManagerServer
     
     @Override
     public String totalCovidCases() throws RemoteException {
-        Bson filterByCovidNotNull = eq("covid_case", "$ne:null");
-        return String.valueOf(scheduleColl.countDocuments(filterByCovidNotNull));  
+        Bson filterByCovidNotNull = eq("covid_case", null);
+        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
     }
     
     @Override
@@ -148,37 +149,13 @@ public class CovidManagerServer
 //                new Document("$or", Arrays.asList(
 //                new Document("last_name", "Smith"),
 //                new Document("first_name", "Joe")));
-        return String.valueOf(scheduleColl.countDocuments(and(bsonList)));
+        return String.valueOf(studentsColl.countDocuments(and(bsonList)));
     }
     
     
     public static String currentCovidCases1(){
-        LocalDate start = LocalDate.now().minusDays(14);
-        LocalDate end = LocalDate.now();
-        
-        List<Bson> bsonList = new ArrayList<Bson>();
-        bsonList.add(gte("covid_case", start));
-        bsonList.add(lte("covid_case", end));
-        
-//        BasicDBObject query = new BasicDBObject("covid_case",
-//                new BasicDBObject("$gte", start));
-        
-//        Bson filterByCoursesId = eq("covid_case", "$gte: start", "$lt: end");
-//          {"covid_case": {$gte: start, $lt: end}}  
-
-//        BasicDBObject date = new BasicDBObject();
-//        date.append("$gte", start);
-//        date.append("$lte", end);
-//
-//        DBObject query = new BasicDBObject();
-//        query.put("date", date);
-
-
-//        Document query = 
-//                new Document("$or", Arrays.asList(
-//                new Document("last_name", "Smith"),
-//                new Document("first_name", "Joe")));
-        return String.valueOf(studentsColl.countDocuments(and(bsonList)));
+        Bson filterByCovidNotNull = eq("covid_case", null);
+        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
     }
     
     @Override
@@ -257,11 +234,12 @@ public class CovidManagerServer
         newStudent.setCovidCase(LocalDate.now());
         studentsColl.insertOne(newStudent);
         
-//        System.out.println("##################################");
-//
-//            System.out.println(currentCovidCases1());
+        System.out.println("##################################");
 
-        ProbabilityCalculator probabilityCalculator = new ProbabilityCalculator();
+            System.out.println(currentCovidCases1());
+
+        ProbabilityCalculator probabilityCalculator = 
+                new ProbabilityCalculator(studentsColl, scheduleColl);
         TaskScheduler taskScheduler =  new TaskScheduler(probabilityCalculator);
         taskScheduler.startAt(22, 54, 0);
     }
