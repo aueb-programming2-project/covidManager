@@ -33,6 +33,8 @@ public class Student implements Serializable {
     private List<Schedule.CoursesEnum> courses;
     @BsonProperty(value = "covid_probability") // Preserve java naming conversion
     private double covidProbability;
+    @BsonProperty(value = "covid_probability_tmp") // Preserve java naming conversion
+    private double covidProbabilityTmp;
     
     // Mongodb POJOs must include a public or protected, 
     // empty, no arguments, constructor.
@@ -53,6 +55,7 @@ public class Student implements Serializable {
                 "12345".getBytes(StandardCharsets.ISO_8859_1));
         this.courses = Collections.emptyList();
         this.covidProbability = 0;
+        this.covidProbabilityTmp = 10;
     }
     
     public Student(
@@ -73,6 +76,7 @@ public class Student implements Serializable {
                 password.getBytes(StandardCharsets.ISO_8859_1));
         this.courses = Collections.emptyList();
         this.covidProbability = 0;
+        this.covidProbabilityTmp = 10;
     }
     
     @Override
@@ -114,8 +118,16 @@ public class Student implements Serializable {
         return covidProbability;
     }
 
-    public void setCovidProbability(int covidProbability) {
+    public void setCovidProbability(double covidProbability) {
         this.covidProbability = covidProbability;
+    }
+    
+    public double getCovidProbabilityTmp() {
+        return covidProbabilityTmp;
+    }
+
+    public void setCovidProbabilityTmp(double covidProbabilityTmp) {
+        this.covidProbabilityTmp = covidProbabilityTmp;
     }
     
     public String getFirstName() {
