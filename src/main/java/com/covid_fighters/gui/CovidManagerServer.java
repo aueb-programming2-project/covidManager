@@ -234,14 +234,14 @@ public class CovidManagerServer
         newStudent.setCovidCase(LocalDate.now());
         studentsColl.insertOne(newStudent);
         
-        System.out.println("##################################");
+//        System.out.println("##################################");
+//
+//            System.out.println(currentCovidCases1());
 
-            System.out.println(currentCovidCases1());
-
-        ProbabilityCalculator probabilityCalculator = 
-                new ProbabilityCalculator(studentsColl, scheduleColl);
-        TaskScheduler taskScheduler =  new TaskScheduler(probabilityCalculator);
-        taskScheduler.startAt(22, 54, 0);
+//        ProbabilityCalculator probabilityCalculator = 
+//                new ProbabilityCalculator(studentsColl, scheduleColl);
+//        TaskScheduler taskScheduler =  new TaskScheduler(probabilityCalculator);
+//        taskScheduler.startAt(22, 54, 0);
     }
 }
     

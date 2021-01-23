@@ -32,7 +32,7 @@ public class Student implements Serializable {
     private String password;
     private List<Schedule.CoursesEnum> courses;
     @BsonProperty(value = "covid_probability") // Preserve java naming conversion
-    private int covidProbability;
+    private double covidProbability;
     
     // Mongodb POJOs must include a public or protected, 
     // empty, no arguments, constructor.
@@ -110,7 +110,7 @@ public class Student implements Serializable {
         this.idNumber = idNumber;
     }
     
-    public int getCovidProbability() {
+    public double getCovidProbability() {
         return covidProbability;
     }
 
