@@ -14,6 +14,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -27,7 +28,8 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gte;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.elemMatch;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
@@ -153,10 +155,10 @@ public class CovidManagerServer
     }
     
     
-    public static String currentCovidCases1(){
-        Bson filterByCovidNotNull = eq("covid_case", null);
-        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
-    }
+//    public static String currentCovidCases1(){
+//        Bson filterByCovidNotNull = eq("covid_case", null);
+//        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
+//    }
     
     @Override
     public String totalStudents() throws RemoteException {
@@ -179,7 +181,7 @@ public class CovidManagerServer
             
         // Retrieving my MongoDB Atlas URI from the system properties
 //        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://covidmanagerserver:covid12345manager@cluster0.qj3sm.mongodb.net/covid?w=majority");
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://@cluster0.qj3sm.mongodb.net/covid?w=majority");
         
         // Configure the CodecRegistry to include a codec to handle the translation to and from BSON for our POJOs
         CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
@@ -233,6 +235,10 @@ public class CovidManagerServer
         newStudent.setCourses(courses);
         newStudent.setCovidCase(LocalDate.now());
         studentsColl.insertOne(newStudent);
+        
+
+
+//        studentsColl.updateMany(queryAll, ((BSONObject)({"$set": {"name": "$firstName"}}")));
         
 //        System.out.println("##################################");
 //
