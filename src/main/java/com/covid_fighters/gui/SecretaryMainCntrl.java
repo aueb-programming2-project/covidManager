@@ -5,8 +5,12 @@
  */
 package com.covid_fighters.gui;
 
+import static com.covid_fighters.gui.App.covidMngrService;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -18,22 +22,31 @@ import javafx.scene.control.Label;
 public class SecretaryMainCntrl implements Initializable {
 
     @FXML
-    private Label userName;
+    private Label totalStudentsLabel;
     @FXML
-    private Label studentsNumber;
+    private Label currentCovidCasesLabel;
     @FXML
-    private Label currentCovidCases;
+    private Label totalCovidCasesLabel;
     @FXML
-    private Label totalCovidCases;
+    private Label potentiallyExposedLabel;
     
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        userName.setText(App.userName);
-//        studentsNumber.setText(App.userName);
-//        currentCovidCases.setText(App.userName);
-//        totalCovidCases.setText(App.userName);
+        try {
+            totalStudentsLabel.setText(
+                    covidMngrService.totalStudents());
+            currentCovidCasesLabel.setText(
+                    covidMngrService.currentCovidCases());
+            totalCovidCasesLabel.setText(
+                    covidMngrService.totalCovidCases());
+            potentiallyExposedLabel.setText(
+                    covidMngrService.potentiallyExposed());
+        } catch (RemoteException ex) {
+            Logger.getLogger(SecretaryMainCntrl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
     }    
 }

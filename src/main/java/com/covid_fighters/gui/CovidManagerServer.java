@@ -56,20 +56,27 @@ public class CovidManagerServer
         extends UnicastRemoteObject implements CovidManagerService {
 
     public static final int QUARANTINE_DAYS = 14;
+
+    // Schedule update probability task at 1:00:00 am    
+    public static final int TARGET_HOUR = 1;
+    public static final int TARGET_MIN = 0;
+    public static final int TARGET_SEC = 0;
+
     
     private static MongoClient mongoClient;
     private static MongoDatabase db;
     private static MongoCollection<Student> studentsColl;
     private static MongoCollection<Schedule> scheduleColl;
-    private static Schedule schedule;
+    
+    private static ProbabilityCalculator probabilityCalculator;
+    private static TaskScheduler taskScheduler;
     
     protected CovidManagerServer() throws RemoteException {
         super();
     }
 
-    
     @Override
-    public ArrayList<Student> getStudent() throws RemoteException {
+    public ArrayList<Student> fetchStudents() throws RemoteException {
         // Retrieves all students from database (very bad practice!!)
         ArrayList<Student> studentsList = studentsColl.find().into(
                 new ArrayList<>());
@@ -86,7 +93,8 @@ public class CovidManagerServer
         options.returnDocument(ReturnDocument.AFTER);
         // Creates a new document when no document matches the query criteria
         options.upsert(true);
-        Document studentId = db.getCollection("student_id_seq").findOneAndUpdate(query, update, options);
+        Document studentId = db.getCollection("student_id_seq")
+                .findOneAndUpdate(query, update, options);
         
         // Set Student Id
         int studentIdNum = studentId.getInteger("STUDENT_ID");
@@ -120,8 +128,8 @@ public class CovidManagerServer
     
     @Override
     public String totalCovidCases() throws RemoteException {
-        Bson filterByCovidNotNull = eq("covid_case", null);
-        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
+        Bson filterCovidNotNull = eq("covid_case", null);
+        return String.valueOf(studentsColl.countDocuments(filterCovidNotNull));  
     }
     
     @Override
@@ -133,37 +141,39 @@ public class CovidManagerServer
         bsonList.add(gte("covid_case", start));
         bsonList.add(lte("covid_case", end));
         
-//        BasicDBObject query = new BasicDBObject("covid_case",
-//                new BasicDBObject("$gte", start));
-        
-//        Bson filterByCoursesId = eq("covid_case", "$gte: start", "$lt: end");
-//          {"covid_case": {$gte: start, $lt: end}}  
-
-//        BasicDBObject date = new BasicDBObject();
-//        date.append("$gte", start);
-//        date.append("$lte", end);
-//
-//        DBObject query = new BasicDBObject();
-//        query.put("date", date);
-
-
-//        Document query = 
-//                new Document("$or", Arrays.asList(
-//                new Document("last_name", "Smith"),
-//                new Document("first_name", "Joe")));
         return String.valueOf(studentsColl.countDocuments(and(bsonList)));
     }
-    
-    
-//    public static String currentCovidCases1(){
-//        Bson filterByCovidNotNull = eq("covid_case", null);
-//        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
-//    }
     
     @Override
     public String totalStudents() throws RemoteException {
         return String.valueOf(scheduleColl.countDocuments());
     }
+    
+    @Override
+    public String potentiallyExposed() throws RemoteException {
+        Bson filterCovidNotNull = gte("covid_probability", 0);
+        
+        return String.valueOf(studentsColl.countDocuments(filterCovidNotNull));
+    }
+    
+    @Override
+    public Schedule fetchSchedule() throws RemoteException {
+        Bson filterSchedule = eq("_id", "SCHEDULE");
+        
+        return scheduleColl.find(filterSchedule).first();
+    }
+    
+    @Override
+    public void saveSchedule(Schedule schedule) throws RemoteException {
+        Bson filterSchedule = eq("_id", "SCHEDULE");
+        
+        scheduleColl.findOneAndReplace(filterSchedule, schedule);
+    }
+    
+//    public static String testTest(){
+//        Bson filterByCovidNotNull = eq("covid_case", null);
+//        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
+//    }
 
     public static void main (String[] argv)
     {
@@ -181,30 +191,41 @@ public class CovidManagerServer
             
         // Retrieving my MongoDB Atlas URI from the system properties
 //        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://@cluster0.qj3sm.mongodb.net/covid?w=majority");
+        ConnectionString connectionString = new ConnectionString(
+                "mongodb+srv://@cluster0.qj3sm.mongodb.net/covid?w=majority");
         
-        // Configure the CodecRegistry to include a codec to handle the translation to and from BSON for our POJOs
-        CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
+        // Configure the CodecRegistry to include a codec to handle 
+        // the translation to and from BSON for our POJOs
+        CodecRegistry pojoCodecRegistry = fromProviders(
+                PojoCodecProvider.builder().automatic(true).build());
 
         // Add the default codec registry, which contains all the default codecs
-        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                                                     pojoCodecRegistry);
+        CodecRegistry codecRegistry = fromRegistries(
+                MongoClientSettings.getDefaultCodecRegistry(),
+                pojoCodecRegistry);
         
         // Wrap all settings together using MongoClientSettings
         MongoClientSettings clientSettings = MongoClientSettings.builder()
-                                                                .applyConnectionString(connectionString)
-                                                                .codecRegistry(codecRegistry)
-                                                                .build();
-        // Initialise connection with MongoDB
-        mongoClient = MongoClients.create(clientSettings);
+                .applyConnectionString(connectionString)
+                .codecRegistry(codecRegistry)
+                .build();
         
+        // Initialise connection with MongoDB
+        try {    
+            mongoClient = MongoClients.create(clientSettings);
+        } catch (Exception e) {
+            System.out.println("Exception mongodb");
+        }
+        
+        // Create database and collections objects
         db = mongoClient.getDatabase("covid");
         studentsColl = db.getCollection("students", Student.class);
         scheduleColl = db.getCollection("schedule", Schedule.class);
         
-        schedule = new Schedule();
-        
-        
+       
+////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+//        Schedule schedule = new Schedule();
+           
 //        schedule.setId("SCHEDULE");
 //        HashMap<String, List<DayOfWeek>> scheduleMap;
 //        scheduleMap = schedule.getScheduleMap();
@@ -223,31 +244,27 @@ public class CovidManagerServer
 //        FindOneAndReplaceOptions returnDocAfterReplace = new FindOneAndReplaceOptions()
 //                                                     .returnDocument(ReturnDocument.AFTER);
 //        schedule = scheduleColl.findOneAndReplace(filterByCoursesId, schedule, returnDocAfterReplace);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//        // Add dummy data
+//        Student newStudent;
+//        newStudent = new Student("hacker","hacker1",LocalDate.of(1999, Month.MAY, 21), (int)2);
+//        studentsColl.insertOne(newStudent);
+//        newStudent = new Student("tester","tester1",LocalDate.of(1998, Month.JULY, 21), (int)1);
+//        List<Schedule.CoursesEnum> courses = Arrays.asList(Schedule.CoursesEnum.Macroeconomics, Schedule.CoursesEnum.DataStructures);
+//        newStudent.setCourses(courses);
+//        newStudent.setCovidCase(LocalDate.now());
+//        studentsColl.insertOne(newStudent);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
+        // Set Probability calculator Task Scheduler
+        probabilityCalculator = 
+                new ProbabilityCalculator(studentsColl, scheduleColl);
+        taskScheduler =  new TaskScheduler(probabilityCalculator);
+        taskScheduler.startAt(TARGET_HOUR, TARGET_MIN, TARGET_SEC);
+
         System.out.println("Server is Ready");
-
-        // Add dummy data
-        Student newStudent;
-        newStudent = new Student("hacker","hacker1",LocalDate.of(1999, Month.MAY, 21), (int)2);
-        studentsColl.insertOne(newStudent);
-        newStudent = new Student("tester","tester1",LocalDate.of(1998, Month.JULY, 21), (int)1);
-        List<Schedule.CoursesEnum> courses = Arrays.asList(Schedule.CoursesEnum.Macroeconomics, Schedule.CoursesEnum.DataStructures);
-        newStudent.setCourses(courses);
-        newStudent.setCovidCase(LocalDate.now());
-        studentsColl.insertOne(newStudent);
-        
-
-
-//        studentsColl.updateMany(queryAll, ((BSONObject)({"$set": {"name": "$firstName"}}")));
-        
-//        System.out.println("##################################");
-//
-//            System.out.println(currentCovidCases1());
-
-//        ProbabilityCalculator probabilityCalculator = 
-//                new ProbabilityCalculator(studentsColl, scheduleColl);
-//        TaskScheduler taskScheduler =  new TaskScheduler(probabilityCalculator);
-//        taskScheduler.startAt(22, 54, 0);
     }
 }
     

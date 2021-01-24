@@ -32,7 +32,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         stage.setTitle("Covid Manager - "
-        + "Act now with the most powerfull solution!");
+        + "Act now with the most powerful solution!");
         scene = new Scene(loadFXML("login"), 800, 600);
         stage.setScene(scene);
         stage.show();

@@ -20,20 +20,20 @@ import org.bson.types.ObjectId;
  */
 public class Student implements Serializable {
     private ObjectId id;
-    @BsonProperty(value = "first_name") // Preserve java naming conversion
+    @BsonProperty(value = "first_name") // Preserve naming conversion
     private String firstName;
-    @BsonProperty(value = "last_name") // Preserve java naming conversion
+    @BsonProperty(value = "last_name") // Preserve naming conversion
     private String lastName;
     private LocalDate birthday;
-    @BsonProperty(value = "covid_case") // Preserve java naming conversion
+    @BsonProperty(value = "covid_case") // Preserve naming conversion
     private LocalDate covidCase;
-    @BsonProperty(value = "id_number") // Preserve java naming conversion
+    @BsonProperty(value = "id_number") // Preserve naming conversion
     private int idNumber;
     private String password;
     private List<Schedule.CoursesEnum> courses;
-    @BsonProperty(value = "covid_probability") // Preserve java naming conversion
+    @BsonProperty(value = "covid_probability") // Preserve naming conversion
     private double covidProbability;
-    @BsonProperty(value = "covid_probability_tmp") // Preserve java naming conversion
+    @BsonProperty(value = "covid_probability_tmp") // Preserve naming conversion
     private double covidProbabilityTmp;
     
     // Mongodb POJOs must include a public or protected, 
@@ -55,7 +55,7 @@ public class Student implements Serializable {
                 "12345".getBytes(StandardCharsets.ISO_8859_1));
         this.courses = Collections.emptyList();
         this.covidProbability = 0;
-        this.covidProbabilityTmp = 10;
+        this.covidProbabilityTmp = 0;
     }
     
     public Student(
@@ -74,9 +74,9 @@ public class Student implements Serializable {
         this.idNumber = idNumber;
         this.password = Base64.getEncoder().encodeToString(
                 password.getBytes(StandardCharsets.ISO_8859_1));
-        this.courses = Collections.emptyList();
+        this.courses = courses;
         this.covidProbability = 0;
-        this.covidProbabilityTmp = 10;
+        this.covidProbabilityTmp = 0;
     }
     
     @Override

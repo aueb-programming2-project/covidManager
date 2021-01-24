@@ -6,7 +6,6 @@
 package com.covid_fighters.gui;
 
 import static com.covid_fighters.gui.CovidManagerServer.QUARANTINE_DAYS;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import static com.mongodb.client.model.Filters.and;
@@ -18,6 +17,7 @@ import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Updates.inc;
 import static com.mongodb.client.model.Updates.set;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +30,12 @@ import org.bson.conversions.Bson;
 public class ProbabilityCalculator {
     private final double COVID_PROBABILITY_FACTOR = 0.5;
     private final double MAX_PROBABILITY_VALUE = 100;
-    private MongoCollection<Student> studentsColl;
-    private MongoCollection<Schedule> scheduleColl;
+    // Probability decrease from day 1 to day 14
+    private final double DECREASE_PROBABILITY_FACTOR[] = { 1, 1, 1, 1, 1,
+                                                           1, 1, 1, 1, 1,
+                                                           1, 1, 1, 1 }; 
+    private final MongoCollection<Student> studentsColl;
+    private final MongoCollection<Schedule> scheduleColl;
     
     public ProbabilityCalculator(MongoCollection<Student> studentsColl, 
                         MongoCollection<Schedule> scheduleColl) {
@@ -48,21 +52,25 @@ public class ProbabilityCalculator {
     }
     
     private void compProbability(Schedule.CoursesEnum course, LocalDate date) {
-        LocalDate fromDate = date.minusDays(QUARANTINE_DAYS);
+        LocalDate today = LocalDate.now();
+        long daysBetween = Duration.between(today, date).toDays();
+        LocalDate fromDate = date.minusDays(QUARANTINE_DAYS + daysBetween);
         LocalDate toDate = date;
         
         // Count all students with covid that attent the course
-        List<Bson> covidCasesQuery = new ArrayList<Bson>();
+        List<Bson> covidCasesQuery = new ArrayList<>();
         covidCasesQuery.add(gte("covid_case", fromDate));
         covidCasesQuery.add(lte("covid_case", toDate));
         long studentsWithCovid = studentsColl.countDocuments(
                 (and(covidCasesQuery)));
         
         // Compute spread probability 
-        double incProbability = studentsWithCovid * COVID_PROBABILITY_FACTOR;
+        double incProbability = studentsWithCovid 
+                * COVID_PROBABILITY_FACTOR 
+                * DECREASE_PROBABILITY_FACTOR[(int)daysBetween];
 
         // Increase infection propability to all students that attent the course
-        List<Bson> attendancesQuery = new ArrayList<Bson>();
+        List<Bson> attendancesQuery = new ArrayList<>();
         attendancesQuery.add(all("courses", course));
         attendancesQuery.add(eq("covid_case", null));
         Bson updateProbability = inc("covid_probability_tmp", incProbability);
@@ -71,8 +79,10 @@ public class ProbabilityCalculator {
 
     private void checkGteMax() {
         // Set to Max if greater than Max
-        Bson outOfRangeQuery = gt("covid_probability_tmp", MAX_PROBABILITY_VALUE);
-        Bson updateToMax = set("covid_probability_tmp", MAX_PROBABILITY_VALUE);
+        Bson outOfRangeQuery = gt("covid_probability_tmp",
+                MAX_PROBABILITY_VALUE);
+        Bson updateToMax = set("covid_probability_tmp",
+                MAX_PROBABILITY_VALUE);
         studentsColl.updateMany(outOfRangeQuery, updateToMax);
     }
     
@@ -101,7 +111,10 @@ public class ProbabilityCalculator {
             // Itterate for all courses 
             for (Schedule.CoursesEnum course : Schedule.CoursesEnum.values()) { 
 
-                Schedule schedule = new Schedule();
+                // Fetch schedule from database
+                Schedule schedule;
+                Bson scheduleQuery = eq("_id", "SCHEDULE");
+                schedule = scheduleColl.find(scheduleQuery).first();
                 HashMap<String, List<DayOfWeek>> scheduleMap = schedule
                         .getScheduleMap();
 

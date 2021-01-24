@@ -34,14 +34,17 @@ public class LoginCntrl {
     
     private void login() throws IOException {
         try {
-            int res = App.covidMngrService.login(userName.getText(), 
-                    password.getText());
+            String userNameInput = userName.getText();
+            String passwordInput = password.getText();
+            int res = App.covidMngrService.login(userNameInput, 
+                    passwordInput);
             
             switch (res) {
                 case 1:  
                     App.setRoot("secretaryFrame");;
                     break;
-                case 2:  
+                case 2:
+                    App.userName = userNameInput;
                     App.setRoot("studentFrame");
                     break;
                 default: 

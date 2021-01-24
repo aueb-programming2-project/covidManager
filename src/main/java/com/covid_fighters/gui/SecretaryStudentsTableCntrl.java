@@ -54,7 +54,8 @@ public class SecretaryStudentsTableCntrl implements Initializable {
      */
     public void changeFirstNameCellEvent(CellEditEvent edittedCell)
     {
-        Student personSelected =  tableView.getSelectionModel().getSelectedItem();
+        Student personSelected =  tableView.getSelectionModel()
+                .getSelectedItem();
         personSelected.setFirstName(edittedCell.getNewValue().toString());
     }
     
@@ -64,13 +65,14 @@ public class SecretaryStudentsTableCntrl implements Initializable {
      */
     public void changeLastNameCellEvent(CellEditEvent edittedCell)
     {
-        Student personSelected =  tableView.getSelectionModel().getSelectedItem();
+        Student personSelected =  tableView.getSelectionModel()
+                .getSelectedItem();
         personSelected.setLastName(edittedCell.getNewValue().toString());
     }
     
     /**
-     * This method will enable the detailed view button once a row in the table is
-     * selected
+     * This method will enable the detailed view button once a row in the table 
+     * is selected
      */
     public void userClickedOnTable()
     {
@@ -81,11 +83,13 @@ public class SecretaryStudentsTableCntrl implements Initializable {
      * When this method is called, it will pass the selected Student object to
      * a the detailed view
      */
-    public void changeCanvasToDetailedStudentView(ActionEvent event) throws IOException {
+    public void changeCanvasToDetailedStudentView(ActionEvent event) 
+            throws IOException {
         CanvasSwitcher.loadCanvas(CanvasSwitcher.SECRETARY_STUDENTS_PROFILE);
         
         //access the controller and call a method
-        SecretaryStudentProfileCntrl controller = (SecretaryStudentProfileCntrl)CanvasSwitcher.getController();
+        SecretaryStudentProfileCntrl controller = 
+                (SecretaryStudentProfileCntrl)CanvasSwitcher.getController();
         controller.initData(tableView.getSelectionModel().getSelectedItem());
     }
 
@@ -108,9 +112,11 @@ public class SecretaryStudentsTableCntrl implements Initializable {
         
         try {
             // cast to ObservableList of Student objects
-            tableView.setItems(FXCollections.observableList(covidMngrService.getStudent()));
+            tableView.setItems(FXCollections.observableList(
+                    covidMngrService.fetchStudents()));
         } catch (RemoteException ex) {
-            Logger.getLogger(SecretaryStudentsTableCntrl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SecretaryStudentsTableCntrl.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
         
         // Update the table to allow for the first and last name fields
@@ -156,8 +162,8 @@ public class SecretaryStudentsTableCntrl implements Initializable {
                                       lastNameTextField.getText(),
                                       birthdayDatePicker.getValue(), 1); // TODO
         
-        // Get all the items from the table as a list, then add the new student to
-        // the list
+        // Get all the items from the table as a list, then add the 
+        // new student to the list
         tableView.getItems().add(newStudent);
         covidMngrService.addStudent(newStudent);
     }
