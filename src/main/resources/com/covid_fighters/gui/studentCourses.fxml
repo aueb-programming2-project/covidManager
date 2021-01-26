@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -10,9 +11,9 @@
 
 <StackPane fx:id="studentSubjects" alignment="BOTTOM_RIGHT" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.covid_fighters.gui.StudentCoursesCntrl">
   <children>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
          <children>
-            <HBox prefHeight="250.0" prefWidth="771.0" spacing="20.0">
+            <HBox alignment="CENTER" prefHeight="250.0" prefWidth="771.0" spacing="20.0">
                <children>
                   <VBox prefHeight="200.0" prefWidth="200.0">
                      <children>
@@ -21,12 +22,17 @@
                               <Font name="System Bold Italic" size="18.0" />
                            </font>
                         </Label>
-                        <ListView fx:id="coursesListView" prefHeight="250.0" prefWidth="200.0" />
+                        <ListView fx:id="allCoursesList" prefHeight="250.0" prefWidth="200.0" />
                      </children>
                   </VBox>
                   <StackPane prefHeight="150.0" prefWidth="200.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#selectButtonPushed" prefWidth="200.0" text="Select-&gt;" />
+                        <VBox alignment="CENTER" prefHeight="64.0" prefWidth="200.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#selectButtonClicked" prefHeight="0.0" prefWidth="200.0" text="Select-&gt;" />
+                              <Button mnemonicParsing="false" onAction="#deselectButtonClicked" prefWidth="200.0" text="Deselect&lt;-" />
+                           </children>
+                        </VBox>
                      </children>
                   </StackPane>
                   <VBox prefHeight="200.0" prefWidth="200.0">
@@ -36,12 +42,16 @@
                               <Font name="System Bold Italic" size="18.0" />
                            </font>
                         </Label>
-                        <TextArea fx:id="coursesTextArea" prefHeight="250.0" prefWidth="200.0" />
+                        <ListView fx:id="selectedCoursesList" prefHeight="250.0" prefWidth="200.0" />
                      </children>
                   </VBox>
                </children>
             </HBox>
+            <Button mnemonicParsing="false" onAction="#saveButtonClicked" text="Save" />
          </children>
+         <StackPane.margin>
+            <Insets top="40.0" />
+         </StackPane.margin>
       </VBox>
   </children>
 </StackPane>

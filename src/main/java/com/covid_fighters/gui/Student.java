@@ -19,6 +19,8 @@ import org.bson.types.ObjectId;
  * Student class
  */
 public class Student implements Serializable {
+    public static final int QUARANTINE_DAYS = 14;
+    
     private ObjectId id;
     @BsonProperty(value = "first_name") // Preserve naming conversion
     private String firstName;
@@ -44,13 +46,12 @@ public class Student implements Serializable {
     public Student(
             String firstName, 
             String lastName, 
-            LocalDate birthday, 
-            int idNumber) {
+            LocalDate birthday) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.covidCase = null; 
-        this.idNumber = idNumber;
+        this.idNumber = 0;
         this.password = Base64.getEncoder().encodeToString(
                 "12345".getBytes(StandardCharsets.ISO_8859_1));
         this.courses = Collections.emptyList();
@@ -63,15 +64,14 @@ public class Student implements Serializable {
             String firstName, 
             String lastName, 
             LocalDate birthday, 
-            LocalDate covidCase, 
-            int idNumber, 
+            LocalDate covidCase,  
             String password, 
             List<Schedule.CoursesEnum> courses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.covidCase = covidCase;
-        this.idNumber = idNumber;
+        this.idNumber = 0;
         this.password = Base64.getEncoder().encodeToString(
                 password.getBytes(StandardCharsets.ISO_8859_1));
         this.courses = courses;
@@ -164,7 +164,12 @@ public class Student implements Serializable {
     
     public int daysUntilRecovery()
     {
-        return Period.between(covidCase, LocalDate.now()).getDays();
+        int daystoRecover = 0;
+        int daysBetween = Period.between(covidCase, LocalDate.now()).getDays();
+        if (daysBetween < QUARANTINE_DAYS) {
+            daystoRecover = QUARANTINE_DAYS - daysBetween;
+        }
+        return daystoRecover;
     }
     
 //    public void setCourses(Schedule.CoursesEnum... courses) {

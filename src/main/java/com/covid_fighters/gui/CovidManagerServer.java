@@ -33,6 +33,7 @@ import static com.mongodb.client.model.Projections.include;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
+import static com.mongodb.client.model.Updates.set;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -84,7 +85,15 @@ public class CovidManagerServer
     }
     
     @Override
-    public void addStudent(Student student) throws RemoteException {
+    public Student fetchStudent(int studentId) throws RemoteException {
+        
+        Bson studentIdQuery = eq("id_number", studentId);
+        Student student = studentsColl.find(studentIdQuery).first();
+        return student; 
+    }
+    
+    @Override
+    public Student addStudent(Student student) throws RemoteException {
         
         // Increase student Id
         Document query = new Document("_id", "UNIQUE COUNT STUDENT IDENTIFIER");
@@ -101,6 +110,8 @@ public class CovidManagerServer
         student.setIdNumber(studentIdNum);
         
         studentsColl.insertOne(student);
+        
+        return student;
     }
     
     @Override
@@ -146,14 +157,16 @@ public class CovidManagerServer
     
     @Override
     public String totalStudents() throws RemoteException {
-        return String.valueOf(scheduleColl.countDocuments());
+        return String.valueOf(studentsColl.countDocuments());
     }
     
     @Override
     public String potentiallyExposed() throws RemoteException {
-        Bson filterCovidNotNull = gte("covid_probability", 0);
+        List<Bson> bsonList = new ArrayList<Bson>();
+        bsonList.add(eq("covid_case", null));
+        bsonList.add(gte("covid_probability", 0));
         
-        return String.valueOf(studentsColl.countDocuments(filterCovidNotNull));
+        return String.valueOf(studentsColl.countDocuments(and(bsonList)));
     }
     
     @Override
@@ -164,16 +177,45 @@ public class CovidManagerServer
     }
     
     @Override
+    public void addCovidCase(int studentId, LocalDate caseDate) throws RemoteException {
+        Bson filterStudentId = eq("id_number", studentId);   
+        Bson updateCovidCase = set("covid_case",caseDate);
+        
+        studentsColl.updateOne(filterStudentId, updateCovidCase);
+    }
+    
+    @Override
+    public void updateStudentCourses(int studentId, List<Schedule.CoursesEnum> 
+            courses) throws RemoteException {
+    
+        Bson filterStudentId = eq("id_number", studentId);   
+        Bson updateCourses = set("courses", courses);
+        
+        studentsColl.updateOne(filterStudentId, updateCourses);
+    }
+    
+    @Override
+    public List<Integer> lastCovidCases() throws RemoteException {
+        List<Integer> covidCasesList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        int covidCases;
+        
+        for (int i = 0; i < QUARANTINE_DAYS; i++) {
+            LocalDate pastDate = today.minusDays(i);
+            Bson filterByDate = eq("covid_case", pastDate);
+ 
+            covidCases = (int)studentsColl.countDocuments(filterByDate);
+            covidCasesList.add(covidCases);
+        }
+        return covidCasesList; 
+    }
+    
+    @Override
     public void saveSchedule(Schedule schedule) throws RemoteException {
         Bson filterSchedule = eq("_id", "SCHEDULE");
         
         scheduleColl.findOneAndReplace(filterSchedule, schedule);
     }
-    
-//    public static String testTest(){
-//        Bson filterByCovidNotNull = eq("covid_case", null);
-//        return String.valueOf(studentsColl.countDocuments(filterByCovidNotNull));  
-//    }
 
     public static void main (String[] argv)
     {
@@ -192,7 +234,7 @@ public class CovidManagerServer
         // Retrieving my MongoDB Atlas URI from the system properties
 //        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
         ConnectionString connectionString = new ConnectionString(
-                "mongodb+srv://@cluster0.qj3sm.mongodb.net/covid?w=majority");
+                "mongodb+srv://covidmanagerserver:");
         
         // Configure the CodecRegistry to include a codec to handle 
         // the translation to and from BSON for our POJOs

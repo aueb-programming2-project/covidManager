@@ -52,10 +52,9 @@ public class SecretaryStudentsTableCntrl implements Initializable {
      * This method will allow the user to double click on a cell and update
      * the first name of the person
      */
-    public void changeFirstNameCellEvent(CellEditEvent edittedCell)
-    {
-        Student personSelected =  tableView.getSelectionModel()
-                .getSelectedItem();
+    public void changeFirstNameCellEvent(CellEditEvent edittedCell) {
+        Student personSelected =  tableView.getSelectionModel().
+                getSelectedItem();
         personSelected.setFirstName(edittedCell.getNewValue().toString());
     }
     
@@ -63,10 +62,9 @@ public class SecretaryStudentsTableCntrl implements Initializable {
      * This method will allow the user to double click on a cell and update
      * the last name of the person
      */
-    public void changeLastNameCellEvent(CellEditEvent edittedCell)
-    {
-        Student personSelected =  tableView.getSelectionModel()
-                .getSelectedItem();
+    public void changeLastNameCellEvent(CellEditEvent edittedCell) {
+        Student personSelected =  tableView.getSelectionModel().
+                getSelectedItem();
         personSelected.setLastName(edittedCell.getNewValue().toString());
     }
     
@@ -108,15 +106,15 @@ public class SecretaryStudentsTableCntrl implements Initializable {
         birthdayColumn.setCellValueFactory
         (new PropertyValueFactory<Student, LocalDate>("birthday"));
         covidColumn.setCellValueFactory
-        (new PropertyValueFactory<Student, LocalDate>("covid"));
+        (new PropertyValueFactory<Student, LocalDate>("covidCase"));
         
         try {
             // cast to ObservableList of Student objects
             tableView.setItems(FXCollections.observableList(
                     covidMngrService.fetchStudents()));
         } catch (RemoteException ex) {
-            Logger.getLogger(SecretaryStudentsTableCntrl.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(SecretaryStudentsTableCntrl.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
         
         // Update the table to allow for the first and last name fields
@@ -137,18 +135,24 @@ public class SecretaryStudentsTableCntrl implements Initializable {
     /**
      * This method will remove the selected row from the table 
      */
-    public void deleteButtonPushed() throws RemoteException
-    {
+    public void deleteButtonPushed() {
         ObservableList<Student> allStudents;
-        Student selectedRows;
+        Student selectedRow;
         allStudents = tableView.getItems();
         
         // This gives us the row that was selected
-        selectedRows = tableView.getSelectionModel().getSelectedItems().get(0);
+        selectedRow = tableView.getSelectionModel().getSelectedItems().get(0);
         
-        // Remove the Student object from the table
-        allStudents.remove(selectedRows);
-        covidMngrService.deleteStudent(selectedRows);
+
+        try {
+            covidMngrService.deleteStudent(selectedRow);
+            
+            // Remove the Student object from the table
+            allStudents.remove(selectedRow);
+        } catch (RemoteException ex) {
+            Logger.getLogger(SecretaryStudentsTableCntrl.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
     }
     
     
@@ -156,15 +160,20 @@ public class SecretaryStudentsTableCntrl implements Initializable {
     /**
      * This method will create a new Student object and add it to the table
      */
-    public void newStudentButtonPushed() throws RemoteException
-    {
+    public void newStudentButtonPushed() {
         Student newStudent = new Student(firstNameTextField.getText(),
-                                      lastNameTextField.getText(),
-                                      birthdayDatePicker.getValue(), 1); // TODO
+                lastNameTextField.getText(),
+                birthdayDatePicker.getValue());
         
-        // Get all the items from the table as a list, then add the 
-        // new student to the list
-        tableView.getItems().add(newStudent);
-        covidMngrService.addStudent(newStudent);
+        try {
+            newStudent = covidMngrService.addStudent(newStudent);
+            
+            // Get all the items from the table as a list, then add the 
+            // new student to the list
+            tableView.getItems().add(newStudent);
+        } catch (RemoteException ex) {
+            Logger.getLogger(StudentMainCntrl.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
     }
 }
