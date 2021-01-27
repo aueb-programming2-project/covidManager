@@ -22,6 +22,7 @@ public class SecretaryFrameCntrl extends MainLayoutCntrl {
     @FXML
     private ImageView Hamburger;
     
+    
     @FXML
     public void initialize() throws IOException {
         MainLayoutCntrl mainCntrl = this;
@@ -33,7 +34,6 @@ public class SecretaryFrameCntrl extends MainLayoutCntrl {
         Image image = new Image(url.toString());
         Hamburger.setImage(image);
     }
-    
     
     @FXML
     void secretaryMain(ActionEvent event) {

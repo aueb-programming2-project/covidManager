@@ -8,7 +8,6 @@ package com.covid_fighters.gui;
 import static com.covid_fighters.gui.App.covidMngrService;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 import java.util.logging.Level;

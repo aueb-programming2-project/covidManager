@@ -6,15 +6,12 @@
 package com.covid_fighters.gui;
 
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.ConnectionString;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -28,26 +25,14 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gte;
 import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.ReturnDocument;
 import static com.mongodb.client.model.Updates.set;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
+import static com.mongodb.client.model.Updates.pushEach;
+import static com.mongodb.client.model.Updates.addEachToSet;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneId;
-import java.util.Arrays;
-import static java.util.Arrays.asList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bson.Document;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -73,10 +58,12 @@ public class CovidManagerServer
     private static ProbabilityCalculator probabilityCalculator;
     private static TaskScheduler taskScheduler;
     
+    // Constructor
     protected CovidManagerServer() throws RemoteException {
         super();
     }
 
+    
     @Override
     public ArrayList<Student> fetchStudents() throws RemoteException {
         // Retrieves all students from database (very bad practice!!)
@@ -85,17 +72,17 @@ public class CovidManagerServer
         return studentsList; 
     }
     
+    
     @Override
     public Student fetchStudent(int studentId) throws RemoteException {
-        
         Bson studentIdQuery = eq("id_number", studentId);
         Student student = studentsColl.find(studentIdQuery).first();
         return student; 
     }
     
+    
     @Override
     public Student addStudent(Student student) throws RemoteException {
-        
         // Increase student Id
         Document query = new Document("_id", "UNIQUE COUNT STUDENT IDENTIFIER");
         Document update = new Document("$inc", new Document("STUDENT_ID", 1));
@@ -115,12 +102,14 @@ public class CovidManagerServer
         return student;
     }
     
+    
     @Override
     public void deleteStudent(Student student) throws RemoteException {
         Bson filterByStudentId = eq("id_number", student.getIdNumber());
         studentsColl.deleteOne(filterByStudentId);
     }
 
+    
     @Override
     public int login(String userName, String password) throws RemoteException {
       if("secretary".equals(userName) && "pass".equals(password)) {
@@ -138,11 +127,13 @@ public class CovidManagerServer
       }
     }
     
+    
     @Override
     public String totalCovidCases() throws RemoteException {
         Bson filterCovidNotNull = eq("covid_case", null);
         return String.valueOf(studentsColl.countDocuments(filterCovidNotNull));  
     }
+    
     
     @Override
     public String currentCovidCases() throws RemoteException{
@@ -156,10 +147,12 @@ public class CovidManagerServer
         return String.valueOf(studentsColl.countDocuments(and(bsonList)));
     }
     
+    
     @Override
     public String totalStudents() throws RemoteException {
         return String.valueOf(studentsColl.countDocuments());
     }
+    
     
     @Override
     public String potentiallyExposed() throws RemoteException {
@@ -170,12 +163,14 @@ public class CovidManagerServer
         return String.valueOf(studentsColl.countDocuments(and(bsonList)));
     }
     
+    
     @Override
     public Schedule fetchSchedule() throws RemoteException {
         Bson filterSchedule = eq("_id", "SCHEDULE");
         
         return scheduleColl.find(filterSchedule).first();
     }
+    
     
     @Override
     public void addCovidCase(int studentId, LocalDate caseDate)
@@ -186,15 +181,23 @@ public class CovidManagerServer
         studentsColl.updateOne(filterStudentId, updateCovidCase);
     }
     
+    
     @Override
     public void updateStudentCourses(int studentId, List<Schedule.CoursesEnum> 
             courses) throws RemoteException {
     
-        Bson filterStudentId = eq("id_number", studentId);   
-        Bson updateCourses = set("courses", courses);
-        
-        studentsColl.updateOne(filterStudentId, updateCourses);
+        // TODO: Update only Array
+//        Bson filterStudentId = eq("id_number", studentId);   
+//        Bson updateCourses = pushEach("courses", courses);
+//        
+//        studentsColl.findOneAndUpdate(filterStudentId, updateCourses);
+
+        Bson studentIdQuery = eq("id_number", studentId);
+        Student student = studentsColl.find(studentIdQuery).first();
+        student.setCourses(courses);
+        studentsColl.replaceOne(studentIdQuery, student);
     }
+    
     
     @Override
     public List<Integer> lastCovidCases() throws RemoteException {
@@ -212,6 +215,7 @@ public class CovidManagerServer
         return covidCasesList; 
     }
     
+    
     @Override
     public void saveSchedule(Schedule schedule) throws RemoteException {
         Bson filterSchedule = eq("_id", "SCHEDULE");
@@ -219,6 +223,8 @@ public class CovidManagerServer
         scheduleColl.findOneAndReplace(filterSchedule, schedule);
     }
 
+    
+    
     public static void main (String[] argv)
     {
         try {
@@ -236,7 +242,7 @@ public class CovidManagerServer
         // Retrieving my MongoDB Atlas URI from the system properties
 //        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
         ConnectionString connectionString = new ConnectionString(
-                "mongodb+srv://cluster0.qj3sm.mongodb.net/covid?w=majority");
+                "mongodb+srv://@cluster0.qj3sm.mongodb.net/covid?w=majority");
         
         // Configure the CodecRegistry to include a codec to handle 
         // the translation to and from BSON for our POJOs
