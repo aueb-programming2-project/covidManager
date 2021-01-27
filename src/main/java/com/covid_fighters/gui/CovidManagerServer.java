@@ -42,6 +42,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.Arrays;
+import static java.util.Arrays.asList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +178,8 @@ public class CovidManagerServer
     }
     
     @Override
-    public void addCovidCase(int studentId, LocalDate caseDate) throws RemoteException {
+    public void addCovidCase(int studentId, LocalDate caseDate)
+            throws RemoteException {
         Bson filterStudentId = eq("id_number", studentId);   
         Bson updateCovidCase = set("covid_case",caseDate);
         
@@ -234,7 +236,7 @@ public class CovidManagerServer
         // Retrieving my MongoDB Atlas URI from the system properties
 //        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
         ConnectionString connectionString = new ConnectionString(
-                "mongodb+srv://covidmanagerserver:");
+                "mongodb+srv://cluster0.qj3sm.mongodb.net/covid?w=majority");
         
         // Configure the CodecRegistry to include a codec to handle 
         // the translation to and from BSON for our POJOs
@@ -299,6 +301,9 @@ public class CovidManagerServer
 //        newStudent.setCovidCase(LocalDate.now());
 //        studentsColl.insertOne(newStudent);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+//        newStudent = new Student("Nikos","Papas",LocalDate.of(1999, Month.MAY, 21), LocalDate.of(2020, Month.JUNE, 10), "password",  asList(Schedule.CoursesEnum.Macroeconomics, Schedule.CoursesEnum.DataStructures, Schedule.CoursesEnum.Management, Schedule.CoursesEnum.Mathematics, Schedule.CoursesEnum.Microeconomics, Schedule.CoursesEnum.ProgrammingI, Schedule.CoursesEnum.ProgrammingII));
+//        studentsColl.insertOne(newStudent);
         
         // Set Probability calculator Task Scheduler
         probabilityCalculator = 

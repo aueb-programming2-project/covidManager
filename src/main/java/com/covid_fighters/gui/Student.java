@@ -59,8 +59,7 @@ public class Student implements Serializable {
         this.covidProbabilityTmp = 0;
     }
     
-    public Student(
-            ObjectId id, 
+    public Student( 
             String firstName, 
             String lastName, 
             LocalDate birthday, 

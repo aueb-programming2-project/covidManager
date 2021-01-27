@@ -16,15 +16,18 @@
                <children>
                   <Label text="Welcome: ">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold Italic" size="18.0" />
                      </font></Label>
                   <Label fx:id="userNameLabel" text="UserName">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="18.0" />
                      </font></Label>
                </children>
             </HBox>
-            <Label fx:id="covidStatusLabel" text="Covid Status" />
+            <Label fx:id="covidStatusLabel" text="Covid Status">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Label>
             <VBox prefHeight="45.0" prefWidth="800.0">
                <children>
                   <Label text="Date of positive COVID-19 test result" />

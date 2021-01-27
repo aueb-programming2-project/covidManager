@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -48,8 +49,8 @@ public class StudentMainCntrl implements Initializable {
         try {
             student = covidMngrService.fetchStudent(studentId);
         } catch (RemoteException ex) {
-            Logger.getLogger(StudentMainCntrl.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentMainCntrl.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
         
         userNameLabel.setText(student.toString());
@@ -84,15 +85,24 @@ public class StudentMainCntrl implements Initializable {
     void confirmCaseClicked(ActionEvent event) {
         LocalDate caseDate = caseDatePicker.getValue();
 
-        if (caseDate != null) {
+        if (caseDate != null && 
+                (caseDate.isBefore(LocalDate.now()) 
+                || caseDate.isEqual(LocalDate.now()))) {
             try {
                 covidMngrService.addCovidCase(studentId, caseDate);
                 student.setCovidCase(caseDate);
                 updateStatusLabel();
             } catch (RemoteException ex) {
-                Logger.getLogger(SecretaryScheduleCntrl.class.getName())
-                        .log(Level.SEVERE, null, ex);
+                Logger.getLogger(SecretaryScheduleCntrl.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "Date is not correct (empty date or date in the future)!");
+            alert.showAndWait();
         }
     }
 }

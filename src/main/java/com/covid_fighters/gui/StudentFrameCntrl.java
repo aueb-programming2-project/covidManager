@@ -48,8 +48,8 @@ public class StudentFrameCntrl extends MainLayoutCntrl {
         try {
         App.setRoot("login");
         } catch (IOException ex) {
-            Logger.getLogger(StudentFrameCntrl.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentFrameCntrl.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
     }
 }

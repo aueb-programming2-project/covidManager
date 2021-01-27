@@ -18,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.SelectionMode;
@@ -46,6 +47,9 @@ public class SecretaryStudentsTableCntrl implements Initializable {
     @FXML private DatePicker birthdayDatePicker;
     
     @FXML private Button detailedStudentViewButton;
+    
+    private final int MIN_CHARS = 3;
+    private final int MIN_YEARS_OLD = 17;
     
     
     /**
@@ -156,14 +160,56 @@ public class SecretaryStudentsTableCntrl implements Initializable {
     }
     
     
-    
     /**
      * This method will create a new Student object and add it to the table
      */
     public void newStudentButtonPushed() {
-        Student newStudent = new Student(firstNameTextField.getText(),
-                lastNameTextField.getText(),
-                birthdayDatePicker.getValue());
+        String firstName = firstNameTextField.getText();
+        String lastName = lastNameTextField.getText();
+        LocalDate birthdayDate = birthdayDatePicker.getValue();
+        
+        // Firts Name Validation
+        if (firstName != null && (firstName.length() < MIN_CHARS)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "First Name is not correct "
+                            + "(empty name or shorter that three characters)!");
+            alert.showAndWait();
+            
+            return;
+        }
+        
+        // Last Name Validation
+        if (lastName != null && (lastName.length() < MIN_CHARS)) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "Last Name is not correct "
+                            + "(empty name or shorter that three characters)!");
+            alert.showAndWait();
+            
+            return;
+        }
+        
+        // Date Validation
+        if (birthdayDate == null || birthdayDate.isAfter(
+                LocalDate.now().minusYears(MIN_YEARS_OLD))) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "Date is not correct "
+                            + "(empty date or student < 17 years old)!");
+            alert.showAndWait();
+            
+            return;
+        }
+        
+        // Construct new student
+        Student newStudent = new Student(firstName, lastName, birthdayDate);
         
         try {
             newStudent = covidMngrService.addStudent(newStudent);

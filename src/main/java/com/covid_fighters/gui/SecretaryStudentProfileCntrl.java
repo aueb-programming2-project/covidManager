@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -97,6 +99,13 @@ public class SecretaryStudentProfileCntrl implements Initializable {
                 Logger.getLogger(SecretaryScheduleCntrl.class.getName())
                         .log(Level.SEVERE, null, ex);
             }
+        } else {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText(
+                    "Date is not correct (empty date or date in the future)!");
+            alert.showAndWait();
         }
     }
     

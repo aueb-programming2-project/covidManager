@@ -98,8 +98,8 @@ public class StudentCoursesCntrl implements Initializable {
             covidMngrService.updateStudentCourses(
                     studentId, selectedCourses);
         } catch (RemoteException ex) {
-            Logger.getLogger(SecretaryScheduleCntrl.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(SecretaryScheduleCntrl.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
     }  
 }

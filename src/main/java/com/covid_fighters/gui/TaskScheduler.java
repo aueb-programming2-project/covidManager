@@ -17,8 +17,8 @@ import java.util.logging.Logger;
 
 
 public class TaskScheduler {
-    ScheduledExecutorService scheduledExecutor = Executors
-            .newScheduledThreadPool(1);
+    ScheduledExecutorService scheduledExecutor = Executors.
+            newScheduledThreadPool(1);
     ProbabilityCalculator probabilityCalculator;
 
     /**
@@ -67,8 +67,8 @@ public class TaskScheduler {
         try {
             scheduledExecutor.awaitTermination(1, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            Logger.getLogger(TaskScheduler.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(TaskScheduler.class.getName()).
+                    log(Level.SEVERE, null, ex);
         }
     } 
 }
