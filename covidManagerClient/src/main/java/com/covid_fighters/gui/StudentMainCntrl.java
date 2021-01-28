@@ -5,6 +5,7 @@
  */
 package com.covid_fighters.gui;
 
+import com.covid_fighters.comlib.Student;
 import static com.covid_fighters.gui.App.covidMngrService;
 import java.net.URL;
 import java.rmi.RemoteException;

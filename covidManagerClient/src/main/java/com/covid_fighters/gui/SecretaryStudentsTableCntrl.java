@@ -5,6 +5,7 @@
  */
 package com.covid_fighters.gui;
 
+import com.covid_fighters.comlib.Student;
 import static com.covid_fighters.gui.App.covidMngrService;
 import java.io.IOException;
 import java.net.URL;
@@ -27,6 +28,7 @@ import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.bson.types.ObjectId;
 
 /**
  * Secretary Students Table FXML Controller class

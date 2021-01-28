@@ -3,9 +3,10 @@
  * Covid Manager Server
  * 
  */
-package com.covid_fighters.gui;
+package com.covid_fighters.server;
 
-import static com.covid_fighters.gui.App.covidMngrService;
+import com.covid_fighters.comlib.Student;
+import com.covid_fighters.comlib.Schedule;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.time.LocalDate;

@@ -5,6 +5,7 @@
  */
 package com.covid_fighters.gui;
 
+import com.covid_fighters.server.CovidManagerService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

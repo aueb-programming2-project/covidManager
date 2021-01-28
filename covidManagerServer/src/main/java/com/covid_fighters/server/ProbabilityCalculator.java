@@ -3,9 +3,11 @@
  * Covid Manager Server
  * 
  */
-package com.covid_fighters.gui;
+package com.covid_fighters.server;
 
-import static com.covid_fighters.gui.CovidManagerServer.QUARANTINE_DAYS;
+import com.covid_fighters.comlib.Student;
+import com.covid_fighters.comlib.Schedule;
+import static com.covid_fighters.server.CovidManagerServer.QUARANTINE_DAYS;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import static com.mongodb.client.model.Filters.and;

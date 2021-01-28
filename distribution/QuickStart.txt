@@ -1,0 +1,12 @@
+1. Run server application and wait until "Server is Ready" message to be logged 
+	Notes: 
+	a) Internet connection is mandatory in order to reach cloud db server
+	b) Many messages logged in the screen from mongodb java driver this is normal
+
+2. Run client application 
+3. Credentials to login as Secretary are: 
+	userName: secretary 
+	password: pass
+4. Credentials to login as Student are: 
+	userName: 1 
+	password: pass2

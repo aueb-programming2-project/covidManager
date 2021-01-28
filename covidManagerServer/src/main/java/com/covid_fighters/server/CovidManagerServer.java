@@ -3,9 +3,11 @@
  * Covid Manager Server
  * 
  */
-package com.covid_fighters.gui;
+package com.covid_fighters.server;
 
 
+import com.covid_fighters.comlib.Student;
+import com.covid_fighters.comlib.Schedule;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -238,11 +240,19 @@ public class CovidManagerServer
         catch (RemoteException e) {
             System.out.println("ERROR: Could not create registry");
         }
+        
+//        // get the logger you want to suppress
+//        Logger log4j = Logger.getLogger("org.mongodb.driver");
+//
+//
+//        // set the level to suppress your stacktrace respectively
+//        log4j.setLevel(Level.WARN);
+
             
         // Retrieving my MongoDB Atlas URI from the system properties
 //        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
         ConnectionString connectionString = new ConnectionString(
-                "mongodb+srv://@cluster0.qj3sm.mongodb.net/covid?w=majority");
+                "mongodb+srv://covidmanagerserver:covid12345manager@cluster0.qj3sm.mongodb.net/covid?w=majority");
         
         // Configure the CodecRegistry to include a codec to handle 
         // the translation to and from BSON for our POJOs

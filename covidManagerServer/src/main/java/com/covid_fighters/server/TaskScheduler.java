@@ -3,7 +3,7 @@
  * Covid Manager Server
  * 
  */
-package com.covid_fighters.gui;
+package com.covid_fighters.server;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

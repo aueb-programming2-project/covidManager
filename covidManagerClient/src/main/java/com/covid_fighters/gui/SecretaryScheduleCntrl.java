@@ -5,8 +5,9 @@
  */
 package com.covid_fighters.gui;
 
+import com.covid_fighters.comlib.Schedule;
 import static com.covid_fighters.gui.App.covidMngrService;
-import com.covid_fighters.gui.Schedule.CoursesEnum;
+import com.covid_fighters.comlib.Schedule.CoursesEnum;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.time.DayOfWeek;
