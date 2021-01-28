@@ -1,4 +1,4 @@
-"%JAVA_HOME%\bin\java" -jar covid-manager-server-1.0.jar
+"%JAVA_HOME%\bin\java" -jar covid-manager-server-1.0-jar-with-dependencies.jar
 
 
 
