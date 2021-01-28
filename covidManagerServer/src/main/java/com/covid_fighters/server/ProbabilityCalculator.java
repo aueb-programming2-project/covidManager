@@ -33,9 +33,10 @@ public class ProbabilityCalculator {
     private final double COVID_PROBABILITY_FACTOR = 0.5;
     private final double MAX_PROBABILITY_VALUE = 100;
     // Probability decrease from day 1 to day 14
-    private final double DECREASE_PROBABILITY_FACTOR[] = { 1, 1, 1, 1, 1,
-                                                           1, 1, 1, 1, 1,
-                                                           1, 1, 1, 1 }; 
+    private final double DECREASE_PROBABILITY_FACTOR[] 
+            = { 1, 0.935, 0.825, 0.735, 0.630,
+                0.52, 0.43, 0.345, 0.275, 0.229,
+                0.184, 0.144, 0.107, 0.087 }; 
     private final MongoCollection<Student> studentsColl;
     private final MongoCollection<Schedule> scheduleColl;
     

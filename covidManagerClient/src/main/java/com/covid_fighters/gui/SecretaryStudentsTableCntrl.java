@@ -7,7 +7,6 @@ package com.covid_fighters.gui;
 
 import com.covid_fighters.comlib.Student;
 import static com.covid_fighters.gui.App.covidMngrService;
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
@@ -57,6 +56,7 @@ public class SecretaryStudentsTableCntrl implements Initializable {
     /**
      * This method will allow the user to double click on a cell and update
      * the first name of the person
+     * @param edittedCell
      */
     public void changeFirstNameCellEvent(CellEditEvent edittedCell) {
         Student personSelected =  tableView.getSelectionModel().
@@ -67,6 +67,7 @@ public class SecretaryStudentsTableCntrl implements Initializable {
     /**
      * This method will allow the user to double click on a cell and update
      * the last name of the person
+     * @param edittedCell
      */
     public void changeLastNameCellEvent(CellEditEvent edittedCell) {
         Student personSelected =  tableView.getSelectionModel().
@@ -86,9 +87,9 @@ public class SecretaryStudentsTableCntrl implements Initializable {
     /**
      * When this method is called, it will pass the selected Student object to
      * a the detailed view
+     * @param event
      */
-    public void changeCanvasToDetailedStudentView(ActionEvent event) 
-            throws IOException {
+    public void changeCanvasToDetailedStudentView(ActionEvent event) {
         CanvasSwitcher.loadCanvas(CanvasSwitcher.SECRETARY_STUDENTS_PROFILE);
         
         //access the controller and call a method
@@ -99,6 +100,8 @@ public class SecretaryStudentsTableCntrl implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {

@@ -282,45 +282,7 @@ public class CovidManagerServer
         studentsColl = db.getCollection("students", Student.class);
         scheduleColl = db.getCollection("schedule", Schedule.class);
         
-       
-////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-//        Schedule schedule = new Schedule();
-           
-//        schedule.setId("SCHEDULE");
-//        HashMap<String, List<DayOfWeek>> scheduleMap;
-//        scheduleMap = schedule.getScheduleMap();
-//        scheduleMap.put(Schedule.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.FRIDAY));
-//        scheduleMap.put(Schedule.CoursesEnum.ProgrammingII.name(), Arrays.asList(DayOfWeek.FRIDAY));
-//        schedule.setScheduleMap(scheduleMap);
-//        scheduleColl.insertOne(schedule);
-//        
-//
-//        Bson filterByCoursesId = eq("_id", "SCHEDULE");
-//        schedule = scheduleColl.find(filterByCoursesId).first();
-//        HashMap<String, List<DayOfWeek>> scheduleMap1;
-//        scheduleMap1 = schedule.getScheduleMap();
-//        scheduleMap1.put(Schedule.CoursesEnum.ProgrammingI.name(), Arrays.asList(DayOfWeek.SATURDAY));
-//        schedule.setScheduleMap(scheduleMap1);    
-//        FindOneAndReplaceOptions returnDocAfterReplace = new FindOneAndReplaceOptions()
-//                                                     .returnDocument(ReturnDocument.AFTER);
-//        schedule = scheduleColl.findOneAndReplace(filterByCoursesId, schedule, returnDocAfterReplace);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////       
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//        // Add dummy data
-//        Student newStudent;
-//        newStudent = new Student("hacker","hacker1",LocalDate.of(1999, Month.MAY, 21), (int)2);
-//        studentsColl.insertOne(newStudent);
-//        newStudent = new Student("tester","tester1",LocalDate.of(1998, Month.JULY, 21), (int)1);
-//        List<Schedule.CoursesEnum> courses = Arrays.asList(Schedule.CoursesEnum.Macroeconomics, Schedule.CoursesEnum.DataStructures);
-//        newStudent.setCourses(courses);
-//        newStudent.setCovidCase(LocalDate.now());
-//        studentsColl.insertOne(newStudent);
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-//        newStudent = new Student("Nikos","Papas",LocalDate.of(1999, Month.MAY, 21), LocalDate.of(2020, Month.JUNE, 10), "password",  asList(Schedule.CoursesEnum.Macroeconomics, Schedule.CoursesEnum.DataStructures, Schedule.CoursesEnum.Management, Schedule.CoursesEnum.Mathematics, Schedule.CoursesEnum.Microeconomics, Schedule.CoursesEnum.ProgrammingI, Schedule.CoursesEnum.ProgrammingII));
-//        studentsColl.insertOne(newStudent);
-        
         // Set Probability calculator Task Scheduler
         probabilityCalculator = 
                 new ProbabilityCalculator(studentsColl, scheduleColl);
