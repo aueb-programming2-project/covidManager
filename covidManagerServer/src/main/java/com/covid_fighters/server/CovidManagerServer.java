@@ -33,8 +33,14 @@ import com.mongodb.client.model.ReturnDocument;
 import static com.mongodb.client.model.Updates.set;
 import static com.mongodb.client.model.Updates.pushEach;
 import static com.mongodb.client.model.Updates.addEachToSet;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bson.Document;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -248,11 +254,16 @@ public class CovidManagerServer
 //        // set the level to suppress your stacktrace respectively
 //        log4j.setLevel(Level.WARN);
 
-            
+
+        String connString = 
+                "";
+        
+//        String connStringDec = new String(
+//                Base64.getDecoder().decode(connString),
+//                StandardCharsets.ISO_8859_1); 
+
         // Retrieving my MongoDB Atlas URI from the system properties
-//        ConnectionString connectionString = new ConnectionString(System.getProperty("mongodb.uri"));
-        ConnectionString connectionString = new ConnectionString(
-                "mongodb+srv://covidmanagerserver:covid12345manager@cluster0.qj3sm.mongodb.net/covid?w=majority");
+        ConnectionString connectionString = new ConnectionString(connString);
         
         // Configure the CodecRegistry to include a codec to handle 
         // the translation to and from BSON for our POJOs
